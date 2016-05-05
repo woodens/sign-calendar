@@ -1,4 +1,7 @@
 ;(function($, window, document,undefined) {
+    $.fn.SignCalendar=function () {
+        return new SignCalendar(this);
+    }
     var SignCalendar = function(ele,opt){
         this.$element = ele;
         this.defaults={};
@@ -9,8 +12,10 @@
      * 初始化
      */
     SignCalendar.prototype.init = function(){
-        $element.innerHTML =  this.createCalendarHeader().append(this.createCalendarWeek(date,dateStr)).append(this.createCalendarList(date,daa));
-
+        var calendarHeaderHtml = this.createCalendarHeader('2016/05','2016年05月').outerHTML;
+        var calendarWeekHtml = this.createCalendarWeek().outerHTML;
+        var calendarListHtml = this.createCalendarList('2016/05',['2016-05-06']).outerHTML;
+        this.$element.innerHTML = calendarHeaderHtml+calendarWeekHtml+calendarListHtml;
     }
     /**
      * 创建头部
@@ -64,9 +69,9 @@
     }
     /**
      * 创建元素
-     * @param  {[type]} tagname [标签名字]
-     * @param  {[type]} attr    [属性(多个)]
-     * @param  {[type]} html    [内容]
+     * @param tagname [标签名字]
+     * @param attr    [属性(多个)]
+     * @param html    [内容]
      */
     function createElement(tagname, attr, html){
         if(!tagname)return;
