@@ -1,6 +1,6 @@
 ;(function($, window, document,undefined) {
-    $.fn.SignCalendar=function () {
-        return new SignCalendar(this);
+    $.fn.SignCalendar=function (opt) {
+        return new SignCalendar(this,opt);
     }
     var SignCalendar = function(ele,opt){
         this.$element = ele;
@@ -282,11 +282,12 @@
         var organizedSigns = [];
         times = times || {};
         for(var timeIndex in times){
-            var organizedSign = {},signDate = new Date().setTime(times[timeIndex]*1000);
+            var organizedSign = {},signDate = new Date();
+            signDate.setTime(times[timeIndex]*1000);
             organizedSign['year'] = signDate.getFullYear();
             organizedSign['month'] = signDate.getMonth()+1;
-            organizedSign['day']  = getCountDays(organizedSign['year'],organizedSign['month']);
-            organizedSign.push(organizedSign);
+            organizedSign['day']  = signDate.getDate();
+            organizedSigns.push(organizedSign);
         }
         return organizedSigns;
     }
