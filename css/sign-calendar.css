@@ -34,7 +34,7 @@
     color: #333;
 }
 .calendar .switch-btn-disable{
-    display: none;
+    visibility:hidden;
 }
 .calendar .switch-btn{
     width: 30px;

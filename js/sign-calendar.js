@@ -25,12 +25,14 @@
         calendarHeaderHtml.push('<div class="calendar-header">');
         calendarHeaderHtml.push('<a class="month-prev switch-btn" href="javascript:;">&lt;</a>');
         calendarHeaderHtml.push('<a class="calendar-month-txt calendar-title" href="javascript:;" data-year="'+year+'" data-month="'+month+'">'+dateStr+'</a>');
-        //todo 如果是当月的不显示前进按钮
-        if(new Date().getMonth()+1==month){
-            calendarHeaderHtml.push('<a class="month-next switch-btn switch-btn-disabled" href="javascript:;">&gt;</a>');
+
+        //如果是当月的不显示前进按钮
+        if(new Date().getFullYear()==year && new Date().getMonth()+1==month){
+            calendarHeaderHtml.push('<a class="month-next switch-btn switch-btn-disable" href="javascript:;">&gt;</a>');
         }else{
             calendarHeaderHtml.push('<a class="month-next switch-btn" href="javascript:;">&gt;</a>');
         }
+
         calendarHeaderHtml.push('</div>');
         return calendarHeaderHtml.join('');
     }
@@ -44,11 +46,13 @@
         var weeks = '日一二三四五六';
 
         for(var i = 0 ; i < 7 ; i++){
-            if((i+1) % 7 == 1 || (i+1) % 7 == 0){
-                calendarWeekHtml.push('<span class="weekend">'+weeks.charAt(i)+'</span>');
-            }else{
-                calendarWeekHtml.push('<span>'+weeks.charAt(i)+'</span>');
-            }
+            //todo 周六周日添加颜色
+            // if((i+1) % 7 == 1 || (i+1) % 7 == 0){
+            //     calendarWeekHtml.push('<span class="weekend">'+weeks.charAt(i)+'</span>');
+            // }else{
+            //     calendarWeekHtml.push('<span>'+weeks.charAt(i)+'</span>');
+            // }
+            calendarWeekHtml.push('<span>'+weeks.charAt(i)+'</span>');
         }
         calendarWeekHtml.push('</div>');
         return calendarWeekHtml.join('');
@@ -62,21 +66,21 @@
      * @returns {*}
      */
     SignCalendar.prototype.createCalendarList = function(year,month){
-        var data = this.option['data'];
         var calendarList = [];
-        var visibleDay = findVisibleDay(year,month);
-        var signDay = findSignDay(visibleDay,year,month,this.option['times']);
-        //todo 计算当前月份的总天数及签到天
-        var prevVisibleDays = visibleDay['prevVisibleDays'];
-        var prevSignDays = signDay['prevSignDays'];
-        //todo 计算上个月显示的天数及签到天
-        var curDays = visibleDay['curDays'];
-        var curSignDays = signDay['curSignDays'];;
-        //todo 计算下个月显示的天数及签到天
-        var nextVisibleDays = visibleDay['nextVisibleDays'];
-        var nextSignDays = signDay['nextSignDays'];;
-        //todo 循环日期 设置样式
-        calendarList.push('<div class="calendar-list">');
+
+        var visibleDay = findVisibleDay(year,month); //当月显示的日期
+        var signDay = findSignDay(visibleDay,year,month,this.option['times']);//当月签到的日期
+
+        var prevVisibleDays = visibleDay['prevVisibleDays'],
+            curDays = visibleDay['curDays'],
+            nextVisibleDays = visibleDay['nextVisibleDays'];
+
+        var prevSignDays = signDay['prevSignDays'],
+            curSignDays = signDay['curSignDays'],
+            nextSignDays = signDay['nextSignDays'];
+
+        //循环日期 设置样式
+        calendarList.push('<div class="calendar-list"><div>');
         for(var visibleDay in prevVisibleDays){
             var cellHtml = '';
             for(var signDay in prevSignDays){
@@ -113,7 +117,7 @@
             }
             calendarList.push(cellHtml);
         }
-        calendarList.push('</div>');
+        calendarList.push('</div></div>');
         return calendarList.join('');
     }
     /**
@@ -140,7 +144,7 @@
 
         var monthNext = $(this.$element).find('.month-prev');
         if(!monthNext.hasClass('switch-btn-disabled')){
-            $(this.$element).find('.month-prev').click(function(){
+            $(this.$element).find('.month-next').click(function(){
                 //计算后一个月的年份及月份
                 var nextMonth = month;
                 var nextYear = year;
@@ -184,7 +188,6 @@
 
         var curDate  = new Date(year,month-1);
         var totalDays = getCountDays(year,month);
-        console.log(totalDays);
         for(var i=0; i<totalDays;i++){
             curDays.push(i+1);
         }
@@ -269,6 +272,12 @@
         signDay['nextSignDays'] = nextSignDays;
         return signDay;
     }
+
+    /**
+     * 格式化签到日期
+     * @param times
+     * @returns {Array}
+     */
     function organizeSignTime(times){
         var organizedSigns = [];
         times = times || {};
